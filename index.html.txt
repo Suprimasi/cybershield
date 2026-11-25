@@ -1,0 +1,1354 @@
+```html
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Цифровой Щит — Проект по безопасности в интернете</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Иконки Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        cyber: {
+                            bg: '#060B19',
+                            card: '#0D1528',
+                            cardHover: '#131E38',
+                            border: '#1E2D4A',
+                            cyan: '#00F0FF',
+                            emerald: '#10B981',
+                            danger: '#EF4444',
+                            warning: '#F59E0B'
+                        }
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 20px rgba(0, 240, 255, 0.25)',
+                        'neon-emerald': '0 0 20px rgba(16, 185, 129, 0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #060B19;
+            color: #F8FAFC;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 240, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
+                linear-gradient(to right, rgba(30, 45, 74, 0.2) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(30, 45, 74, 0.2) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(13, 21, 40, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(30, 45, 74, 0.9);
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: #00F0FF;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #1E2D4A;
+            border-radius: 999px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #060B19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E2D4A;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
+        }
+
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeInSlide 0.35s ease forwards;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-cyber-cyan selection:text-cyber-bg">
+
+    <!-- Всплывающее уведомление -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+        <div class="glass-panel border-cyber-cyan/50 shadow-neon-cyan rounded-xl px-4 py-3 flex items-center gap-3">
+            <i data-lucide="check-circle-2" class="w-5 h-5 text-cyber-emerald shrink-0"></i>
+            <span id="toast-message" class="text-sm font-medium text-white">Готово</span>
+        </div>
+    </div>
+
+    <!-- Шапка сайта -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-cyber-border/80">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="#" class="flex items-center gap-2.5 group">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyber-cyan to-cyber-emerald p-0.5 shadow-neon-cyan transition-transform group-hover:scale-105">
+                        <div class="w-full h-full bg-cyber-bg rounded-[10px] flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-cyber-cyan"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight text-white">Цифровой<span class="text-cyber-cyan">Щит</span></span>
+                        <span class="hidden sm:inline-block ml-2 text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/20">Проект</span>
+                    </div>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-1">
+                    <a href="#password-tool" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-cyber-cyan hover:bg-white/5 transition">Пароли</a>
+                    <a href="#phishing-simulator" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-cyber-cyan hover:bg-white/5 transition">Тест на фишинг</a>
+                    <a href="#knowledge-base" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-cyber-cyan hover:bg-white/5 transition">Разбор угроз</a>
+                    <a href="#hygiene-checklist" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-cyber-cyan hover:bg-white/5 transition">Чек-лист</a>
+                </nav>
+
+                <div class="flex items-center gap-3">
+                    <a href="#hygiene-checklist" class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-emerald/50 transition text-xs font-mono">
+                        <span class="w-2 h-2 rounded-full bg-cyber-emerald animate-pulse"></span>
+                        <span class="text-slate-400">Твоя защита:</span>
+                        <span id="header-score" class="text-cyber-emerald font-bold">0%</span>
+                    </a>
+                    <button id="mobile-menu-btn" class="md:hidden p-2 rounded-xl bg-cyber-card border border-cyber-border text-slate-300 hover:text-white" aria-label="Меню">
+                        <i data-lucide="menu" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden border-t border-cyber-border bg-cyber-card/95 px-4 pt-2 pb-4 space-y-1">
+            <a href="#password-tool" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5 hover:text-cyber-cyan">Проверка и генератор паролей</a>
+            <a href="#phishing-simulator" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5 hover:text-cyber-cyan">Тест на фишинг</a>
+            <a href="#knowledge-base" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5 hover:text-cyber-cyan">Разбор главных угроз</a>
+            <a href="#hygiene-checklist" class="mobile-link block px-3 py-2.5 rounded-xl text-base font-medium text-slate-200 hover:bg-white/5 hover:text-cyber-cyan">Чек-лист безопасности</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Главный экран -->
+        <section class="relative pt-12 pb-16 sm:pt-20 sm:pb-24 overflow-hidden">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center max-w-4xl mx-auto">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan text-xs sm:text-sm font-medium mb-6">
+                        <i data-lucide="terminal" class="w-4 h-4"></i>
+                        <span>Учебный проект по безопасности в сети</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-6">
+                        Как не потерять аккаунты и деньги в <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyber-cyan via-teal-300 to-cyber-emerald">интернете</span>
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+                        «Цифровой Щит» - это сайт с рабочими инструментами, где можно проверить надёжность своих паролей, потренироваться отличать реальные письма от мошенников и навести порядок в настройках безопасности.
+                        <span class="block mt-3 text-sm sm:text-base text-cyber-cyan/90 font-medium">Создатели: студенты Колледжа Туризма и Прикладных Технологий Санкт-Петербурга Кольберг Вячеслав, Гайфуллин Ринат, Федоров Владимир.</span>
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                        <a href="#password-tool" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyber-cyan to-teal-400 text-cyber-bg font-bold text-sm sm:text-base shadow-neon-cyan hover:opacity-95 transition flex items-center justify-center gap-2">
+                            <i data-lucide="key-round" class="w-5 h-5"></i>
+                            <span>Проверить свой пароль</span>
+                        </a>
+                        <a href="#phishing-simulator" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-cyber-card border border-cyber-border hover:border-cyber-cyan/60 text-white font-semibold text-sm sm:text-base transition flex items-center justify-center gap-2">
+                            <i data-lucide="radar" class="w-5 h-5 text-cyber-emerald"></i>
+                            <span>Пройти тест на фишинг</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Карточки с фактами -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyber-cyan hover:bg-cyber-cardHover transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono uppercase text-slate-400">Обман и фишинг</span>
+                            <i data-lucide="fish" class="w-5 h-5 text-cyber-cyan"></i>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono mb-1">82%</div>
+                        <p class="text-xs text-slate-400 leading-relaxed">взломов происходит не из-за крутых хакеров, а потому что люди сами переходят по левым ссылкам</p>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyber-warning hover:bg-cyber-cardHover transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono uppercase text-slate-400">Простые пароли</span>
+                            <i data-lucide="unlock" class="w-5 h-5 text-cyber-warning"></i>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono mb-1">&lt; 1 сек</div>
+                        <p class="text-xs text-slate-400 leading-relaxed">нужно программе на обычной игровой видеокарте, чтобы подобрать пароль из 8 простых букв</p>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyber-emerald hover:bg-cyber-cardHover transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono uppercase text-slate-400">Двойная защита (2FA)</span>
+                            <i data-lucide="shield-alert" class="w-5 h-5 text-cyber-emerald"></i>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono mb-1">99.9%</div>
+                        <p class="text-xs text-slate-400 leading-relaxed">попыток чужого входа блокируются, если включено подтверждение через приложение-аутентификатор</p>
+                    </div>
+
+                    <div class="glass-panel rounded-2xl p-5 border-l-4 border-l-cyber-danger hover:bg-cyber-cardHover transition">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-mono uppercase text-slate-400">Один пароль на всё</span>
+                            <i data-lucide="copy-x" class="w-5 h-5 text-cyber-danger"></i>
+                        </div>
+                        <div class="text-2xl sm:text-3xl font-extrabold text-white font-mono mb-1">65%</div>
+                        <p class="text-xs text-slate-400 leading-relaxed">людей ставят одинаковый пароль на разные сайты и рискуют потерять сразу все свои профили</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок 1: Проверка и генератор паролей -->
+        <section id="password-tool" class="py-16 border-t border-cyber-border/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-10">
+                    <div class="inline-flex items-center gap-2 text-cyber-cyan font-mono text-xs uppercase tracking-wider mb-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i>
+                        <span>Инструмент 1</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Проверка и генератор паролей</h2>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Всё считается прямо у тебя в браузере, никуда на сервер пароли не отправляются.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                    <!-- Левая часть: Анализатор -->
+                    <div class="lg:col-span-7 glass-panel rounded-2xl p-6 sm:p-8 flex flex-col justify-between">
+                        <div>
+                            <label for="password-input" class="block text-sm font-medium text-slate-300 mb-2">Впиши пароль для проверки или сделай новый справа:</label>
+                            <div class="relative flex items-center mb-4">
+                                <input 
+                                    type="text" 
+                                    id="password-input" 
+                                    placeholder="Например: MyS3cur3#P@ssw0rd2026" 
+                                    autocomplete="off"
+                                    class="w-full bg-cyber-bg border border-cyber-border focus:border-cyber-cyan focus:ring-1 focus:ring-cyber-cyan rounded-xl pl-4 pr-24 py-3.5 text-white font-mono text-base sm:text-lg outline-none transition"
+                                >
+                                <div class="absolute right-2 flex items-center gap-1">
+                                    <button id="toggle-visibility-btn" type="button" title="Скрыть или показать пароль" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition">
+                                        <i data-lucide="eye" id="eye-icon" class="w-5 h-5"></i>
+                                    </button>
+                                    <button id="copy-password-btn" type="button" title="Скопировать пароль" class="p-2 rounded-lg text-cyber-cyan hover:bg-cyber-cyan/10 transition">
+                                        <i data-lucide="copy" class="w-5 h-5"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center text-xs sm:text-sm mb-2">
+                                    <span class="text-slate-400">Надёжность: <strong id="strength-label" class="text-slate-200">Жду ввод...</strong></span>
+                                    <span class="font-mono text-slate-400">Сложность: <strong id="entropy-value" class="text-cyber-cyan">0 бит</strong></span>
+                                </div>
+                                <div class="w-full h-2.5 bg-cyber-bg rounded-full overflow-hidden border border-cyber-border">
+                                    <div id="strength-bar" class="h-full w-0 bg-slate-600 transition-all duration-300 rounded-full"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-cyber-bg/90 border border-cyber-border rounded-xl p-4 mb-6 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-cyber-cyan/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="clock" class="w-5 h-5 text-cyber-cyan"></i>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs text-slate-400">За сколько такой пароль подберут перебором:</div>
+                                        <div id="crack-time" class="text-base sm:text-lg font-bold font-mono text-white">-</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 mb-6">
+                                <div id="crit-length" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>От 12 символов</span>
+                                </div>
+                                <div id="crit-upper" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>Большие буквы (A-Z)</span>
+                                </div>
+                                <div id="crit-lower" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>Маленькие (a-z)</span>
+                                </div>
+                                <div id="crit-number" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>Цифры (0-9)</span>
+                                </div>
+                                <div id="crit-symbol" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>Спецсимволы (!@#$)</span>
+                                </div>
+                                <div id="crit-pattern" class="flex items-center gap-2 text-xs p-2.5 rounded-xl bg-cyber-bg/60 border border-cyber-border text-slate-400">
+                                    <i data-lucide="circle" class="w-4 h-4 shrink-0"></i>
+                                    <span>Без шаблонов (1234)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-cyber-border pt-4">
+                            <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Что можно улучшить:</div>
+                            <ul id="password-tips" class="text-xs sm:text-sm text-slate-300 space-y-1.5">
+                                <li class="flex items-start gap-2">
+                                    <i data-lucide="info" class="w-4 h-4 text-cyber-cyan shrink-0 mt-0.5"></i>
+                                    <span>Введи пароль выше или нажми кнопку генерации справа.</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Правая часть: Генератор -->
+                    <div class="lg:col-span-5 glass-panel rounded-2xl p-6 sm:p-8 flex flex-col justify-between border-cyber-cyan/20">
+                        <div>
+                            <div class="flex items-center gap-2.5 mb-6">
+                                <div class="w-8 h-8 rounded-lg bg-cyber-emerald/15 flex items-center justify-center text-cyber-emerald">
+                                    <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                </div>
+                                <h3 class="text-lg font-bold text-white">Генератор сложного пароля</h3>
+                            </div>
+
+                            <div class="mb-6">
+                                <div class="flex justify-between items-center mb-2">
+                                    <label for="length-slider" class="text-sm text-slate-300">Длина пароля</label>
+                                    <span id="length-display" class="font-mono font-bold text-cyber-cyan bg-cyber-cyan/10 px-2.5 py-0.5 rounded-lg text-sm">16</span>
+                                </div>
+                                <input type="range" id="length-slider" min="8" max="32" value="16" class="w-full">
+                                <div class="flex justify-between text-[11px] font-mono text-slate-500 mt-1">
+                                    <span>8 (мин)</span>
+                                    <span>16 (в самый раз)</span>
+                                    <span>32 (макс)</span>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3 mb-8">
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-cyber-bg/70 border border-cyber-border cursor-pointer hover:border-slate-600 transition">
+                                    <span class="text-sm text-slate-200">Заглавные буквы <span class="font-mono text-xs text-slate-400">(A-Z)</span></span>
+                                    <input type="checkbox" id="gen-upper" checked class="w-4 h-4 accent-cyber-cyan rounded">
+                                </label>
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-cyber-bg/70 border border-cyber-border cursor-pointer hover:border-slate-600 transition">
+                                    <span class="text-sm text-slate-200">Строчные буквы <span class="font-mono text-xs text-slate-400">(a-z)</span></span>
+                                    <input type="checkbox" id="gen-lower" checked class="w-4 h-4 accent-cyber-cyan rounded">
+                                </label>
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-cyber-bg/70 border border-cyber-border cursor-pointer hover:border-slate-600 transition">
+                                    <span class="text-sm text-slate-200">Цифры <span class="font-mono text-xs text-slate-400">(0-9)</span></span>
+                                    <input type="checkbox" id="gen-numbers" checked class="w-4 h-4 accent-cyber-cyan rounded">
+                                </label>
+                                <label class="flex items-center justify-between p-3 rounded-xl bg-cyber-bg/70 border border-cyber-border cursor-pointer hover:border-slate-600 transition">
+                                    <span class="text-sm text-slate-200">Спецсимволы <span class="font-mono text-xs text-slate-400">(!@#$%^&*)</span></span>
+                                    <input type="checkbox" id="gen-symbols" checked class="w-4 h-4 accent-cyber-cyan rounded">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <button id="generate-btn" type="button" class="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-cyber-emerald to-teal-500 text-cyber-bg font-bold text-sm sm:text-base shadow-neon-emerald hover:opacity-95 transition flex items-center justify-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+                                <span>Сгенерировать новый пароль</span>
+                            </button>
+                            <p class="text-[11px] text-center text-slate-400">Используется встроенный генератор случайных чисел браузера</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок 2: Тест на фишинг -->
+        <section id="phishing-simulator" class="py-16 border-t border-cyber-border/50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
+                    <div>
+                        <div class="inline-flex items-center gap-2 text-cyber-emerald font-mono text-xs uppercase tracking-wider mb-2">
+                            <i data-lucide="crosshair" class="w-4 h-4"></i>
+                            <span>Инструмент 2</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-bold text-white">Тест «Поймай фишинг»</h2>
+                        <p class="text-slate-400 text-sm sm:text-base mt-1">Посмотри на адрес отправителя, ссылки и текст сообщения, чтобы понять, где развод, а где обычное письмо.</p>
+                    </div>
+                    
+                    <div class="glass-panel px-4 py-2.5 rounded-xl flex items-center gap-4 self-start sm:self-auto">
+                        <div>
+                            <div class="text-[11px] font-mono text-slate-400 uppercase">Вопрос</div>
+                            <div id="sim-progress" class="text-sm font-bold font-mono text-white">1 / 5</div>
+                        </div>
+                        <div class="h-7 w-px bg-cyber-border"></div>
+                        <div>
+                            <div class="text-[11px] font-mono text-slate-400 uppercase">Счёт</div>
+                            <div id="sim-score" class="text-sm font-bold font-mono text-cyber-cyan">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="simulator-container" class="glass-panel rounded-2xl overflow-hidden border border-cyber-border shadow-xl">
+                    <div class="bg-cyber-bg/90 border-b border-cyber-border px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-amber-500/80"></span>
+                            <span class="w-3 h-3 rounded-full bg-emerald-500/80"></span>
+                            <span id="sim-channel-badge" class="ml-2 text-xs font-mono px-2.5 py-0.5 rounded-md bg-cyber-cyan/10 text-cyber-cyan border border-cyber-cyan/20">
+                                Входящее письмо (Email)
+                            </span>
+                        </div>
+                        <button id="toggle-headers-btn" type="button" class="text-xs font-mono text-slate-400 hover:text-cyber-cyan flex items-center gap-1.5 transition">
+                            <i data-lucide="search-code" class="w-4 h-4"></i>
+                            <span>Показать детали письма</span>
+                        </button>
+                    </div>
+
+                    <div id="sim-card-body" class="p-6 sm:p-8">
+                        <div class="border-b border-cyber-border pb-4 mb-5 space-y-2">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                                <div class="text-sm">
+                                    <span class="text-slate-400">От кого: </span>
+                                    <span id="sim-sender-name" class="font-semibold text-white">Служба безопасности Банка</span>
+                                    <span id="sim-sender-email" class="font-mono text-xs text-cyber-cyan bg-cyber-bg px-2 py-0.5 rounded ml-1 border border-cyber-border">&lt;support@sber-security-alert.ru&gt;</span>
+                                </div>
+                                <span id="sim-time" class="text-xs font-mono text-slate-500">Сегодня, 14:22</span>
+                            </div>
+                            <div class="text-sm sm:text-base">
+                                <span class="text-slate-400">Тема: </span>
+                                <span id="sim-subject" class="font-bold text-white">СРОЧНО: Подозрительный перевод 48 500 ₽! Подтвердите личность</span>
+                            </div>
+
+                            <div id="sim-headers-box" class="hidden mt-3 p-3 rounded-xl bg-cyber-bg font-mono text-xs text-slate-300 border border-cyber-border space-y-1">
+                                <div><span class="text-slate-500">Обратный адрес:</span> <span id="sim-return-path" class="text-amber-400">bounce@bulk-mailer-x99.net</span></div>
+                                <div><span class="text-slate-500">Подпись домена (SPF):</span> <span id="sim-spf" class="text-red-400">FAIL (подпись не совпадает с доменом)</span></div>
+                                <div><span class="text-slate-500">Куда ведёт ссылка:</span> <span id="sim-url-preview" class="text-cyber-cyan underline break-all">http://sber-online-verify.tk/login</span></div>
+                            </div>
+                        </div>
+
+                        <div id="sim-message-text" class="text-sm sm:text-base text-slate-200 leading-relaxed space-y-3 mb-6 bg-cyber-bg/40 p-5 rounded-xl border border-cyber-border/60">
+                        </div>
+
+                        <div id="sim-actions" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <button id="btn-choice-safe" type="button" class="py-3.5 px-6 rounded-xl bg-cyber-emerald/15 hover:bg-cyber-emerald/25 border border-cyber-emerald/50 text-cyber-emerald font-bold text-sm sm:text-base transition flex items-center justify-center gap-2">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                                <span>Нормальное письмо (Безопасно)</span>
+                            </button>
+                            <button id="btn-choice-phish" type="button" class="py-3.5 px-6 rounded-xl bg-cyber-danger/15 hover:bg-cyber-danger/25 border border-cyber-danger/50 text-cyber-danger font-bold text-sm sm:text-base transition flex items-center justify-center gap-2">
+                                <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                                <span>Это развод (Фишинг!)</span>
+                            </button>
+                        </div>
+
+                        <div id="sim-feedback" class="hidden mt-6 p-5 rounded-xl border animate-fade-in">
+                            <div class="flex items-start gap-3 mb-3">
+                                <div id="feedback-icon-wrap" class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                                    <i id="feedback-icon" data-lucide="check" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 id="feedback-title" class="font-bold text-base sm:text-lg">Верно!</h4>
+                                    <p id="feedback-summary" class="text-xs sm:text-sm text-slate-300 mt-0.5"></p>
+                                </div>
+                            </div>
+                            <div class="pl-11">
+                                <div class="text-xs font-mono uppercase tracking-wider text-slate-400 mb-2">На что стоило обратить внимание:</div>
+                                <ul id="feedback-flags" class="space-y-1.5 text-xs sm:text-sm text-slate-200 mb-5">
+                                </ul>
+                                <button id="sim-next-btn" type="button" class="px-5 py-2.5 rounded-xl bg-cyber-cyan text-cyber-bg font-bold text-sm hover:opacity-90 transition inline-flex items-center gap-2">
+                                    <span>Дальше</span>
+                                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="sim-result-screen" class="hidden p-8 sm:p-12 text-center animate-fade-in">
+                        <div class="w-16 h-16 rounded-2xl bg-cyber-cyan/15 border border-cyber-cyan/40 flex items-center justify-center mx-auto mb-5 shadow-neon-cyan">
+                            <i data-lucide="award" class="w-8 h-8 text-cyber-cyan"></i>
+                        </div>
+                        <h3 class="text-2xl sm:text-3xl font-extrabold text-white mb-2">Тест пройден!</h3>
+                        <p class="text-slate-400 text-sm sm:text-base mb-6">Твой результат:</p>
+                        
+                        <div class="inline-block bg-cyber-bg border border-cyber-border rounded-2xl px-8 py-5 mb-6">
+                            <div id="final-sim-score" class="text-4xl font-extrabold font-mono text-cyber-emerald mb-1">5 / 5</div>
+                            <div id="final-sim-rank" class="text-sm font-medium text-slate-300">Отличный результат</div>
+                        </div>
+
+                        <div>
+                            <button id="sim-restart-btn" type="button" class="px-6 py-3 rounded-xl bg-cyber-card border border-cyber-cyan/50 hover:bg-cyber-cyan hover:text-cyber-bg text-cyber-cyan font-bold text-sm transition inline-flex items-center gap-2">
+                                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                                <span>Пройти ещё раз</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок 3: Разбор главных угроз -->
+        <section id="knowledge-base" class="py-16 border-t border-cyber-border/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8">
+                    <div class="inline-flex items-center gap-2 text-cyber-cyan font-mono text-xs uppercase tracking-wider mb-2">
+                        <i data-lucide="book-open-check" class="w-4 h-4"></i>
+                        <span>Инструмент 3</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Разбор главных угроз</h2>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Выбери тему, чтобы посмотреть, как работают популярные схемы взлома и как от них защититься.</p>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-6" id="kb-tabs">
+                    <button type="button" data-topic="phishing" class="kb-tab active px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cyber-cyan/15 border-cyber-cyan text-cyber-cyan">
+                        <i data-lucide="fish" class="w-4 h-4"></i>
+                        <span>Фишинг и обман</span>
+                    </button>
+                    <button type="button" data-topic="leaks" class="kb-tab px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cyber-card border-cyber-border text-slate-300 hover:border-slate-500">
+                        <i data-lucide="database-zap" class="w-4 h-4"></i>
+                        <span>Сливы баз и пароли</span>
+                    </button>
+                    <button type="button" data-topic="malware" class="kb-tab px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cyber-card border-cyber-border text-slate-300 hover:border-slate-500">
+                        <i data-lucide="wifi-off" class="w-4 h-4"></i>
+                        <span>Вирусы и чужой Wi-Fi</span>
+                    </button>
+                    <button type="button" data-topic="twofa" class="kb-tab px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cyber-card border-cyber-border text-slate-300 hover:border-slate-500">
+                        <i data-lucide="smartphone-nfc" class="w-4 h-4"></i>
+                        <span>Защита по коду (2FA)</span>
+                    </button>
+                    <button type="button" data-topic="socials" class="kb-tab px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition flex items-center gap-2 bg-cyber-card border-cyber-border text-slate-300 hover:border-slate-500">
+                        <i data-lucide="message-square-lock" class="w-4 h-4"></i>
+                        <span>Соцсети и мессенджеры</span>
+                    </button>
+                </div>
+
+                <div id="kb-content" class="glass-panel rounded-2xl p-6 sm:p-8 animate-fade-in">
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок 4: Чек-лист безопасности -->
+        <section id="hygiene-checklist" class="py-16 border-t border-cyber-border/50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="mb-8">
+                    <div class="inline-flex items-center gap-2 text-cyber-emerald font-mono text-xs uppercase tracking-wider mb-2">
+                        <i data-lucide="list-checks" class="w-4 h-4"></i>
+                        <span>Инструмент 4</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white">Чек-лист базовой безопасности</h2>
+                    <p class="text-slate-400 text-sm sm:text-base mt-1">Отметь галочками то, что у тебя уже сделано, и посмотри свой общий процент защиты.</p>
+                </div>
+
+                <div class="glass-panel rounded-2xl p-6 sm:p-8 mb-6 border-cyber-emerald/30">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                        <div>
+                            <div class="text-xs font-mono uppercase text-slate-400 mb-1">Твой текущий статус</div>
+                            <div id="hygiene-status-title" class="text-xl sm:text-2xl font-bold text-amber-400">Начальный уровень</div>
+                        </div>
+                        <div class="text-left sm:text-right">
+                            <span id="hygiene-percent" class="text-3xl sm:text-4xl font-extrabold font-mono text-cyber-cyan">0%</span>
+                            <div id="hygiene-count" class="text-xs text-slate-400 font-mono">0 из 8 сделано</div>
+                        </div>
+                    </div>
+
+                    <div class="w-full h-3.5 bg-cyber-bg rounded-full overflow-hidden border border-cyber-border mb-4">
+                        <div id="hygiene-progress-bar" class="h-full w-0 bg-gradient-to-r from-cyber-cyan to-cyber-emerald transition-all duration-500 rounded-full"></div>
+                    </div>
+
+                    <p id="hygiene-advice" class="text-xs sm:text-sm text-slate-300 bg-cyber-bg/70 p-3.5 rounded-xl border border-cyber-border">
+                        Отметь пункты ниже. Даже если сделать хотя бы половину из этого списка, взломать тебя станет в разы сложнее.
+                    </p>
+                </div>
+
+                <div id="checklist-items" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-6">
+                </div>
+
+                <div class="flex justify-end">
+                    <button id="reset-checklist-btn" type="button" class="text-xs font-mono text-slate-400 hover:text-white flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-white/5 transition">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Сбросить отметки</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-cyber-border bg-cyber-card/60 py-10 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="shield-check" class="w-5 h-5 text-cyber-cyan"></i>
+                <span class="font-bold text-white">Цифровой<span class="text-cyber-cyan">Щит</span></span>
+                <span class="text-xs text-slate-500">| Студенческий проект КТиПТ</span>
+            </div>
+            <div class="text-xs text-slate-400 text-center sm:text-right">
+                Все проверки работают локально в браузере, твои пароли никуда не сохраняются и не передаются.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Уведомления и мобильное меню
+            const toastEl = document.getElementById('toast-notification');
+            const toastMsgEl = document.getElementById('toast-message');
+            let toastTimeout;
+
+            function showToast(message) {
+                toastMsgEl.textContent = message;
+                toastEl.classList.remove('translate-y-24', 'opacity-0');
+                clearTimeout(toastTimeout);
+                toastTimeout = setTimeout(() => {
+                    toastEl.classList.add('translate-y-24', 'opacity-0');
+                }, 2800);
+            }
+
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+            });
+
+            // Проверка и генератор паролей
+            const passwordInput = document.getElementById('password-input');
+            const toggleVisBtn = document.getElementById('toggle-visibility-btn');
+            const copyBtn = document.getElementById('copy-password-btn');
+            
+            const strengthLabel = document.getElementById('strength-label');
+            const entropyValue = document.getElementById('entropy-value');
+            const strengthBar = document.getElementById('strength-bar');
+            const crackTimeEl = document.getElementById('crack-time');
+            const tipsList = document.getElementById('password-tips');
+
+            const lengthSlider = document.getElementById('length-slider');
+            const lengthDisplay = document.getElementById('length-display');
+            const genUpper = document.getElementById('gen-upper');
+            const genLower = document.getElementById('gen-lower');
+            const genNumbers = document.getElementById('gen-numbers');
+            const genSymbols = document.getElementById('gen-symbols');
+            const generateBtn = document.getElementById('generate-btn');
+
+            lengthSlider.addEventListener('input', () => {
+                lengthDisplay.textContent = lengthSlider.value;
+            });
+
+            let isPasswordVisible = true;
+            toggleVisBtn.addEventListener('click', () => {
+                isPasswordVisible = !isPasswordVisible;
+                passwordInput.type = isPasswordVisible ? 'text' : 'password';
+                toggleVisBtn.innerHTML = `<i data-lucide="${isPasswordVisible ? 'eye' : 'eye-off'}" class="w-5 h-5"></i>`;
+                lucide.createIcons();
+            });
+
+            copyBtn.addEventListener('click', () => {
+                if (!passwordInput.value) {
+                    showToast('Сначала введи или сгенерируй пароль');
+                    return;
+                }
+                const prevType = passwordInput.type;
+                passwordInput.type = 'text';
+                passwordInput.select();
+                passwordInput.setSelectionRange(0, 99999);
+                try {
+                    document.execCommand('copy');
+                    showToast('Пароль скопирован в буфер!');
+                } catch (err) {
+                    showToast('Не удалось скопировать');
+                }
+                passwordInput.type = prevType;
+                window.getSelection().removeAllRanges();
+            });
+
+            function setCriterionState(elementId, passed) {
+                const el = document.getElementById(elementId);
+                if (!el) return;
+                const iconEl = el.querySelector('i, svg');
+                if (passed) {
+                    el.classList.remove('text-slate-400', 'border-cyber-border', 'bg-cyber-bg/60');
+                    el.classList.add('text-cyber-emerald', 'border-cyber-emerald/40', 'bg-cyber-emerald/10');
+                    if (iconEl) {
+                        const newIcon = document.createElement('i');
+                        newIcon.setAttribute('data-lucide', 'check-circle-2');
+                        newIcon.className = 'w-4 h-4 shrink-0';
+                        iconEl.replaceWith(newIcon);
+                    }
+                } else {
+                    el.classList.remove('text-cyber-emerald', 'border-cyber-emerald/40', 'bg-cyber-emerald/10');
+                    el.classList.add('text-slate-400', 'border-cyber-border', 'bg-cyber-bg/60');
+                    if (iconEl) {
+                        const newIcon = document.createElement('i');
+                        newIcon.setAttribute('data-lucide', 'circle');
+                        newIcon.className = 'w-4 h-4 shrink-0';
+                        iconEl.replaceWith(newIcon);
+                    }
+                }
+            }
+
+            function formatCrackTime(seconds) {
+                if (seconds < 0.001) return 'Мгновенно (меньше 1 мс)';
+                if (seconds < 1) return 'Меньше секунды';
+                if (seconds < 60) return `Примерно ${Math.round(seconds)} сек.`;
+                const minutes = seconds / 60;
+                if (minutes < 60) return `Примерно ${Math.round(minutes)} мин.`;
+                const hours = minutes / 60;
+                if (hours < 24) return `Примерно ${Math.round(hours)} ч.`;
+                const days = hours / 24;
+                if (days < 365) return `Примерно ${Math.round(days)} дн.`;
+                const years = days / 365.25;
+                if (years < 1000) return `Около ${Math.round(years)} лет`;
+                if (years < 1e6) return `Около ${Math.round(years / 1000)} тыс. лет`;
+                if (years < 1e9) return `Около ${Math.round(years / 1e6)} млн лет`;
+                return 'Миллиарды лет (почти нереально подобрать)';
+            }
+
+            function analyzePassword(pwd) {
+                if (!pwd) {
+                    strengthLabel.textContent = 'Жду ввод...';
+                    strengthLabel.className = 'text-slate-200';
+                    entropyValue.textContent = '0 бит';
+                    strengthBar.style.width = '0%';
+                    crackTimeEl.textContent = '-';
+                    ['crit-length', 'crit-upper', 'crit-lower', 'crit-number', 'crit-symbol', 'crit-pattern'].forEach(id => setCriterionState(id, false));
+                    tipsList.innerHTML = `<li class="flex items-start gap-2"><i data-lucide="info" class="w-4 h-4 text-cyber-cyan shrink-0 mt-0.5"></i><span>Введи пароль выше или нажми кнопку генерации справа.</span></li>`;
+                    lucide.createIcons();
+                    return;
+                }
+
+                const hasLength = pwd.length >= 12;
+                const hasUpper = /[A-ZА-ЯЁ]/.test(pwd);
+                const hasLower = /[a-zа-яё]/.test(pwd);
+                const hasNumber = /[0-9]/.test(pwd);
+                const hasSymbol = /[^A-Za-zА-Яа-яЁё0-9]/.test(pwd);
+                
+                const commonPatterns = /(1234|qwerty|password|admin|йцукен|пароль|1111|0000|abcd)/i;
+                const noCommonPattern = !commonPatterns.test(pwd) && pwd.length >= 6;
+
+                setCriterionState('crit-length', hasLength);
+                setCriterionState('crit-upper', hasUpper);
+                setCriterionState('crit-lower', hasLower);
+                setCriterionState('crit-number', hasNumber);
+                setCriterionState('crit-symbol', hasSymbol);
+                setCriterionState('crit-pattern', noCommonPattern);
+
+                let poolSize = 0;
+                if (/[a-z]/.test(pwd)) poolSize += 26;
+                if (/[A-Z]/.test(pwd)) poolSize += 26;
+                if (/[а-яё]/.test(pwd)) poolSize += 33;
+                if (/[А-ЯЁ]/.test(pwd)) poolSize += 33;
+                if (hasNumber) poolSize += 10;
+                if (hasSymbol) poolSize += 32;
+                if (poolSize === 0) poolSize = 10;
+
+                let entropy = Math.round(pwd.length * Math.log2(poolSize));
+                if (!noCommonPattern) entropy = Math.max(10, Math.floor(entropy * 0.45));
+
+                entropyValue.textContent = `${entropy} бит`;
+
+                const combinations = Math.pow(2, entropy);
+                const secondsToCrack = combinations / 1e11;
+                crackTimeEl.textContent = formatCrackTime(secondsToCrack);
+
+                let percentage = Math.min(100, Math.round((entropy / 90) * 100));
+                strengthBar.style.width = `${percentage}%`;
+
+                if (entropy < 36) {
+                    strengthLabel.textContent = 'Очень слабый';
+                    strengthLabel.className = 'text-cyber-danger';
+                    strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-cyber-danger';
+                } else if (entropy < 55) {
+                    strengthLabel.textContent = 'Слабоватый';
+                    strengthLabel.className = 'text-orange-400';
+                    strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-orange-400';
+                } else if (entropy < 75) {
+                    strengthLabel.textContent = 'Нормальный';
+                    strengthLabel.className = 'text-cyber-warning';
+                    strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-cyber-warning';
+                } else {
+                    strengthLabel.textContent = 'Отличный (надёжный)';
+                    strengthLabel.className = 'text-cyber-emerald';
+                    strengthBar.className = 'h-full transition-all duration-300 rounded-full bg-gradient-to-r from-cyber-cyan to-cyber-emerald';
+                }
+
+                const tips = [];
+                if (!noCommonPattern) tips.push('Убери очевидные комбинации вроде «1234» или «qwerty» - словари взломщиков проверяют их первыми.');
+                if (!hasLength) tips.push(`Сделай пароль подлиннее, хотя бы 12-16 символов (сейчас ${pwd.length}).`);
+                if (!hasUpper || !hasLower) tips.push('Смешай большие и маленькие буквы вразброс.');
+                if (!hasNumber) tips.push('Добавь пару цифр в середину пароля, а не просто в конец.');
+                if (!hasSymbol) tips.push('Добавь спецсимволы (!, @, #, $, %), это сильно усложняет подбор.');
+
+                if (tips.length === 0) {
+                    tips.push('Отличный пароль! Главное - не ставь его на другие сайты и сохрани в менеджере паролей.');
+                }
+
+                tipsList.innerHTML = tips.map(tip => `
+                    <li class="flex items-start gap-2">
+                        <i data-lucide="${tips.length === 1 && entropy >= 75 ? 'shield-check' : 'alert-circle'}" class="w-4 h-4 ${tips.length === 1 && entropy >= 75 ? 'text-cyber-emerald' : 'text-cyber-cyan'} shrink-0 mt-0.5"></i>
+                        <span>${tip}</span>
+                    </li>
+                `).join('');
+
+                lucide.createIcons();
+            }
+
+            passwordInput.addEventListener('input', (e) => analyzePassword(e.target.value));
+
+            function generateCryptoPassword() {
+                const length = parseInt(lengthSlider.value, 10);
+                let charset = '';
+                const upperChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                const lowerChars = 'abcdefghijkmnopqrstuvwxyz';
+                const numberChars = '23456789';
+                const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.?';
+
+                const mandatoryChars = [];
+                const randomBuffer = new Uint32Array(length + 4);
+                window.crypto.getRandomValues(randomBuffer);
+                let randIdx = 0;
+
+                if (genUpper.checked) {
+                    charset += upperChars;
+                    mandatoryChars.push(upperChars[randomBuffer[randIdx++] % upperChars.length]);
+                }
+                if (genLower.checked) {
+                    charset += lowerChars;
+                    mandatoryChars.push(lowerChars[randomBuffer[randIdx++] % lowerChars.length]);
+                }
+                if (genNumbers.checked) {
+                    charset += numberChars;
+                    mandatoryChars.push(numberChars[randomBuffer[randIdx++] % numberChars.length]);
+                }
+                if (genSymbols.checked) {
+                    charset += symbolChars;
+                    mandatoryChars.push(symbolChars[randomBuffer[randIdx++] % symbolChars.length]);
+                }
+
+                if (!charset) {
+                    genLower.checked = true;
+                    charset = lowerChars;
+                    showToast('Нужно оставить хотя бы один тип символов');
+                }
+
+                const resultChars = [...mandatoryChars];
+                while (resultChars.length < length) {
+                    resultChars.push(charset[randomBuffer[randIdx++] % charset.length]);
+                }
+
+                const shuffleBuffer = new Uint32Array(resultChars.length);
+                window.crypto.getRandomValues(shuffleBuffer);
+                for (let i = resultChars.length - 1; i > 0; i--) {
+                    const j = shuffleBuffer[i] % (i + 1);
+                    [resultChars[i], resultChars[j]] = [resultChars[j], resultChars[i]];
+                }
+
+                const finalPwd = resultChars.join('');
+                passwordInput.value = finalPwd;
+                analyzePassword(finalPwd);
+            }
+
+            generateBtn.addEventListener('click', generateCryptoPassword);
+            generateCryptoPassword();
+
+            // Тест на фишинг
+            const phishingScenarios = [
+                {
+                    channel: 'Входящее письмо (Email)',
+                    senderName: 'Служба безопасности Банка',
+                    senderEmail: '<alert@sberbank-secure-verify.ru>',
+                    time: 'Сегодня, 10:14',
+                    subject: 'СРОЧНО: Попытка списания 34 900 ₽! Подтвердите отмену',
+                    returnPath: 'mailer@promo-dispatch-88.xyz',
+                    spf: 'FAIL (поддельный домен отправителя)',
+                    urlPreview: 'http://sberbank-secure-verify.ru/auth/cancel-transfer',
+                    bodyHtml: `
+                        <p>Уважаемый клиент!</p>
+                        <p>Наша система заметила попытку перевода <strong class="text-white">34 900,00 ₽</strong> с вашей карты в г. Новосибирск.</p>
+                        <p>Если это делали не вы, <span class="text-red-400 font-semibold">срочно перейдите по ссылке в течение 15 минут</span> и введите данные карты и код из СМС для отмены, иначе деньги уйдут безвозвратно.</p>
+                        <div class="pt-2">
+                            <span class="inline-block px-4 py-2 rounded-lg bg-emerald-600 text-white text-xs font-bold cursor-not-allowed">Отменить перевод →</span>
+                        </div>
+                    `,
+                    isPhishing: true,
+                    summary: 'Типичный банковский развод: мошенники пугают потерей денег и торопят, чтобы ты не успел подумать.',
+                    flags: [
+                        '🚩 Левый домен отправителя (sberbank-secure-verify.ru вместо настоящего сайта банка).',
+                        '🚩 Искусственная паника («у вас есть 15 минут»), чтобы заставить действовать на эмоциях.',
+                        '🚩 Настоящий банк никогда не просит вводить реквизиты карты и коды из СМС на каких-то сайтах по ссылке.'
+                    ]
+                },
+                {
+                    channel: 'Уведомление от сервиса (Email)',
+                    senderName: 'GitHub Security',
+                    senderEmail: '<noreply@github.com>',
+                    time: 'Вчера, 19:45',
+                    subject: '[GitHub] A new SSH key was added to your account',
+                    returnPath: 'noreply@github.com',
+                    spf: 'PASS (подпись github.com подтверждена)',
+                    urlPreview: 'https://github.com/settings/keys',
+                    bodyHtml: `
+                        <p>Привет, @student_dev!</p>
+                        <p>К твоему аккаунту GitHub только что привязали новый SSH-ключ (<code class="text-cyber-cyan">MacBook-Air-M2</code>).</p>
+                        <p>Если это сделал ты, просто проигнорируй письмо. Если ключ добавлял не ты, зайди в настройки безопасности на сайте <strong>github.com/settings/keys</strong> и удали его.</p>
+                    `,
+                    isPhishing: false,
+                    summary: 'Это настоящее системное уведомление от GitHub.',
+                    flags: [
+                        '✅ Официальный адрес отправителя (@github.com) и подтверждённая цифровая подпись.',
+                        '✅ В письме нет кнопки «срочно введи пароль здесь» - предлагают самому зайти в настройки аккаунта.',
+                        '✅ Спокойный текст без запугивания.'
+                    ]
+                },
+                {
+                    channel: 'СМС на телефон',
+                    senderName: 'CDEK-Dostavka',
+                    senderEmail: '+7 (901) 442-89-11',
+                    time: 'Сегодня, 13:05',
+                    subject: 'Уведомление по посылке №RU849201',
+                    returnPath: 'Обычный мобильный номер',
+                    spf: 'Нет (СМС с частного номера)',
+                    urlPreview: 'https://cdek-track-info.shop/pay-customs/849201',
+                    bodyHtml: `
+                        <p>Ваша посылка №RU849201 задержана на складе из-за ошибки в адресе.</p>
+                        <p>Уточните адрес и оплатите пошлину за повторную доставку (49 руб.) по ссылке: <span class="text-cyber-cyan underline">cdek-track-info.shop/pay</span></p>
+                    `,
+                    isPhishing: true,
+                    summary: 'Популярная схема с фейковой доставкой, чтобы украсть данные банковской карты.',
+                    flags: [
+                        '🚩 Ссылка ведёт на подозрительный сайт в зоне .shop (cdek-track-info.shop), а не на официальный cdek.ru.',
+                        '🚩 Службы доставки не пишут с обычных мобильных номеров (+7 901...).',
+                        '🚩 Сумма всего 49 рублей нужна для того, чтобы ты расслабился и ввёл данные карты с CVC-кодом на поддельном сайте.'
+                    ]
+                },
+                {
+                    channel: 'Сообщение в мессенджере',
+                    senderName: 'Техподдержка Telegram',
+                    senderEmail: '@Telegram_Support_Notice_Bot',
+                    time: 'Сегодня, 16:40',
+                    subject: 'Заявка на удаление вашего аккаунта',
+                    returnPath: 'Обычный бот без галочки верификации',
+                    spf: 'Не подтверждён',
+                    urlPreview: 'https://telegra-auth-cancel.com/verify',
+                    bodyHtml: `
+                        <p>⚠️ <strong>Внимание!</strong> Поступила заявка на удаление вашего аккаунта Telegram. Профиль будет удалён через 24 часа.</p>
+                        <p>Если вы не подавали заявку, срочно авторизуйтесь на портале безопасности для отмены: <span class="text-cyber-cyan underline">telegra-auth-cancel.com/verify</span></p>
+                    `,
+                    isPhishing: true,
+                    summary: 'Так угоняют аккаунты в Телеграме через фейковых ботов поддержки.',
+                    flags: [
+                        '🚩 Настоящий Telegram пишет только из системного чата с синей галочкой, а не с ботов с припиской _Bot.',
+                        '🚩 Сайт telegra-auth-cancel.com к Телеграму отношения не имеет (официальный сайт - telegram.org).',
+                        '🚩 Если ввести там номер и код из СМС, мошенники сразу зайдут в твой профиль.'
+                    ]
+                },
+                {
+                    channel: 'Почта учебного заведения',
+                    senderName: 'ИТ-отдел',
+                    senderEmail: '<helpdesk@university.edu.ru>',
+                    time: 'Сегодня, 09:30',
+                    subject: 'Обновление расписания в личном кабинете',
+                    returnPath: 'helpdesk@university.edu.ru',
+                    spf: 'PASS (сервер учебного заведения)',
+                    urlPreview: 'https://lk.university.edu.ru/schedule',
+                    bodyHtml: `
+                        <p>Добрый день!</p>
+                        <p>Новое расписание занятий уже загружено в личный кабинет студента на портале <code class="text-cyber-cyan">lk.university.edu.ru</code>.</p>
+                        <p>Если что-то не открывается, заходите в 204 кабинет или звоните по внутреннему номеру 11-22.</p>
+                    `,
+                    isPhishing: false,
+                    summary: 'Обычное информационное письмо от своего учебного заведения.',
+                    flags: [
+                        '✅ Адрес отправителя и ссылка находятся на одном официальном домене (university.edu.ru).',
+                        '✅ Никто не просит вводить пароль прямо из письма или скачивать непонятные архивы.',
+                        '✅ Указан реальный кабинет и внутренний телефон, куда можно подойти и уточнить.'
+                    ]
+                }
+            ];
+
+            let currentSimIndex = 0;
+            let simScore = 0;
+            let simAnswered = false;
+
+            const simProgressEl = document.getElementById('sim-progress');
+            const simScoreEl = document.getElementById('sim-score');
+            const simChannelBadge = document.getElementById('sim-channel-badge');
+            const simSenderName = document.getElementById('sim-sender-name');
+            const simSenderEmail = document.getElementById('sim-sender-email');
+            const simTime = document.getElementById('sim-time');
+            const simSubject = document.getElementById('sim-subject');
+            const simReturnPath = document.getElementById('sim-return-path');
+            const simSpf = document.getElementById('sim-spf');
+            const simUrlPreview = document.getElementById('sim-url-preview');
+            const simMessageText = document.getElementById('sim-message-text');
+
+            const toggleHeadersBtn = document.getElementById('toggle-headers-btn');
+            const simHeadersBox = document.getElementById('sim-headers-box');
+            const simActions = document.getElementById('sim-actions');
+            const simFeedback = document.getElementById('sim-feedback');
+            const feedbackIconWrap = document.getElementById('feedback-icon-wrap');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackSummary = document.getElementById('feedback-summary');
+            const feedbackFlags = document.getElementById('feedback-flags');
+            const simNextBtn = document.getElementById('sim-next-btn');
+
+            const simCardBody = document.getElementById('sim-card-body');
+            const simResultScreen = document.getElementById('sim-result-screen');
+
+            toggleHeadersBtn.addEventListener('click', () => {
+                simHeadersBox.classList.toggle('hidden');
+            });
+
+            function renderScenario(index) {
+                const sc = phishingScenarios[index];
+                simAnswered = false;
+                
+                simProgressEl.textContent = `${index + 1} / ${phishingScenarios.length}`;
+                simChannelBadge.textContent = sc.channel;
+                simSenderName.textContent = sc.senderName;
+                simSenderEmail.textContent = sc.senderEmail;
+                simTime.textContent = sc.time;
+                simSubject.textContent = sc.subject;
+                simReturnPath.textContent = sc.returnPath;
+                simSpf.textContent = sc.spf;
+                simSpf.className = sc.isPhishing ? 'text-red-400' : 'text-cyber-emerald';
+                simUrlPreview.textContent = sc.urlPreview;
+                simMessageText.innerHTML = sc.bodyHtml;
+
+                simActions.classList.remove('hidden');
+                simFeedback.classList.add('hidden');
+                simNextBtn.querySelector('span').textContent = (index === phishingScenarios.length - 1) ? 'Узнать результат' : 'Следующий пример';
+            }
+
+            function handleSimAnswer(userGuessedPhishing) {
+                if (simAnswered) return;
+                simAnswered = true;
+
+                const sc = phishingScenarios[currentSimIndex];
+                const isCorrect = (userGuessedPhishing === sc.isPhishing);
+
+                if (isCorrect) {
+                    simScore++;
+                    simScoreEl.textContent = simScore;
+                    simFeedback.className = 'mt-6 p-5 rounded-xl border border-cyber-emerald/50 bg-cyber-emerald/10 animate-fade-in';
+                    feedbackIconWrap.className = 'w-8 h-8 rounded-lg bg-cyber-emerald/20 text-cyber-emerald flex items-center justify-center shrink-0 mt-0.5';
+                    feedbackIconWrap.innerHTML = '<i data-lucide="check-circle-2" class="w-5 h-5"></i>';
+                    feedbackTitle.textContent = 'В точку! (+1 балл)';
+                    feedbackTitle.className = 'font-bold text-base sm:text-lg text-cyber-emerald';
+                } else {
+                    simFeedback.className = 'mt-6 p-5 rounded-xl border border-cyber-danger/50 bg-cyber-danger/10 animate-fade-in';
+                    feedbackIconWrap.className = 'w-8 h-8 rounded-lg bg-cyber-danger/20 text-cyber-danger flex items-center justify-center shrink-0 mt-0.5';
+                    feedbackIconWrap.innerHTML = '<i data-lucide="x-circle" class="w-5 h-5"></i>';
+                    feedbackTitle.textContent = sc.isPhishing ? 'Попался! Это было письмо от мошенников' : 'Зря заподозрил - это нормальное письмо';
+                    feedbackTitle.className = 'font-bold text-base sm:text-lg text-cyber-danger';
+                }
+
+                feedbackSummary.textContent = sc.summary;
+                feedbackFlags.innerHTML = sc.flags.map(f => `<li>${f}</li>`).join('');
+                
+                simActions.classList.add('hidden');
+                simFeedback.classList.remove('hidden');
+                simHeadersBox.classList.remove('hidden');
+                lucide.createIcons();
+            }
+
+            document.getElementById('btn-choice-safe').addEventListener('click', () => handleSimAnswer(false));
+            document.getElementById('btn-choice-phish').addEventListener('click', () => handleSimAnswer(true));
+
+            simNextBtn.addEventListener('click', () => {
+                if (currentSimIndex < phishingScenarios.length - 1) {
+                    currentSimIndex++;
+                    simHeadersBox.classList.add('hidden');
+                    renderScenario(currentSimIndex);
+                } else {
+                    simCardBody.classList.add('hidden');
+                    simResultScreen.classList.remove('hidden');
+                    document.getElementById('final-sim-score').textContent = `${simScore} / ${phishingScenarios.length}`;
+                    
+                    const rankEl = document.getElementById('final-sim-rank');
+                    if (simScore === 5) rankEl.textContent = 'Максимум баллов! Мошенникам тебя не провести.';
+                    else if (simScore >= 3) rankEl.textContent = 'Неплохо, но на адреса ссылок лучше смотреть внимательнее.';
+                    else rankEl.textContent = 'Стоит быть осторожнее - всегда проверяй домен сайта перед вводом пароля.';
+                }
+            });
+
+            document.getElementById('sim-restart-btn').addEventListener('click', () => {
+                currentSimIndex = 0;
+                simScore = 0;
+                simScoreEl.textContent = '0';
+                simHeadersBox.classList.add('hidden');
+                simResultScreen.classList.add('hidden');
+                simCardBody.classList.remove('hidden');
+                renderScenario(0);
+            });
+
+            renderScenario(0);
+
+            // База знаний по угрозам
+            const knowledgeData = {
+                phishing: {
+                    title: 'Фишинг и социальная инженерия',
+                    subtitle: 'Когда взламывают не компьютер, а самого человека',
+                    threatDesc: 'Мошенники прикидываются банками, службами доставки, техподдержкой или даже знакомыми. Они давят на эмоции: пугают списанием денег, блокировкой аккаунта или обещают халявный приз, чтобы заставить перейти на поддельный сайт и ввести свои данные.',
+                    rules: [
+                        { title: 'Всегда смотри на адрес сайта в строке браузера', desc: 'Подделки часто отличаются одной буквой: g00gle.com, sber-id.ru или ozon-pay.net вместо настоящих доменов.' },
+                        { title: 'Не ведись на срочность', desc: 'Если от тебя требуют сделать что-то за 10-15 минут под угрозой штрафа или удаления страницы - это почти точно развод.' },
+                        { title: 'Зайди на сайт сам, а не по ссылке', desc: 'Если пришло тревожное письмо от банка, закрой его и открой официальное приложение банка вручную.' }
+                    ]
+                },
+                leaks: {
+                    title: 'Сливы баз данных и пароли',
+                    subtitle: 'Почему один пароль на все сайты - плохая идея',
+                    threatDesc: 'Базы разных интернет-магазинов, форумов и сервисов регулярно утекают в сеть. Злоумышленники берут оттуда связки «почта + пароль» и автоматическими программами проверяют, не подходят ли они к твоей почте, банку или соцсетям.',
+                    rules: [
+                        { title: 'Разные пароли для важных сервисов', desc: 'Почта, банк, Госуслуги и соцсети должны иметь свои уникальные пароли, чтобы взлом одного сайта не потянул за собой всё остальное.' },
+                        { title: 'Заведи менеджер паролей', desc: 'Не нужно держать в голове десятки сложных комбинаций - используй Bitwarden, KeePassXC или встроенный менеджер паролей в браузере/телефоне.' },
+                        { title: 'Используй длинные парольные фразы', desc: 'Фраза из 3-4 случайных слов с цифрой и знаком (например, Синий-Кактус-74-Космос!) легко запоминается и её нереально подобрать.' }
+                    ]
+                },
+                malware: {
+                    title: 'Вирусы-стилеры и открытый Wi-Fi',
+                    subtitle: 'Откуда берутся вирусы и чем опасен бесплатный интернет в кафе',
+                    threatDesc: 'Современные вирусы (стилеры) не ломают систему, а тихо воруют сохранённые пароли и сессии из браузера. Чаще всего их цепляют через пиратские игры, «кряки» и читы. А в публичном Wi-Fi без пароля злоумышленники могут перехватывать незашифрованный трафик.',
+                    rules: [
+                        { title: 'Осторожнее с пиратским софтом и репаками', desc: 'Бесплатные активаторы Windows, читы для игр и взломанные программы с торрентов - главный источник стилеров.' },
+                        { title: 'Не откладывай обновления', desc: 'Обновления Windows, macOS, Android, iOS и браузеров закрывают дыры в безопасности, через которые работают вирусы.' },
+                        { title: 'Не заходи в банк через открытый Wi-Fi', desc: 'В кафе, метро или аэропорту лучше использовать мобильный интернет, если нужно перевести деньги или ввести важные пароли.' }
+                    ]
+                },
+                twofa: {
+                    title: 'Двухфакторная защита (2FA)',
+                    subtitle: 'Второй замок, который спасёт, даже если пароль украли',
+                    threatDesc: 'Когда включена 2FA, одного пароля для входа недостаточно - сервис попросит одноразовый код из специального приложения на телефоне или подтверждение по пуш-уведомлению. Даже зная твой пароль, мошенник не попадёт внутрь.',
+                    rules: [
+                        { title: 'Приложение лучше, чем СМС', desc: 'Поставь Google Authenticator, Яндекс Ключ или Aegis - коды генерируются прямо в телефоне без интернета, и их нельзя перехватить по сети.' },
+                        { title: 'Начни с главной почты', desc: 'Через почту можно сбросить пароли почти от всех остальных аккаунтов, поэтому защити её в первую очередь.' },
+                        { title: 'Сохрани резервные коды', desc: 'При настройке 2FA сайт выдаёт одноразовые коды восстановления - запиши их на листок или сохрани в надёжном месте на случай, если потеряешь телефон.' }
+                    ]
+                },
+                socials: {
+                    title: 'Соцсети и мессенджеры',
+                    subtitle: 'Как защитить переписки и не подставить друзей',
+                    threatDesc: 'Чаще всего аккаунты в Телеграме и ВК угоняют для того, чтобы от твоего имени рассылать знакомым просьбы «срочно занять пару тысяч до вечера». Плюс по открытым страницам мошенники легко узнают номер телефона, дату рождения и имена близких.',
+                    rules: [
+                        { title: 'Поставь облачный пароль в Телеграме', desc: 'В настройках конфиденциальности включи двухэтапную аутентификацию - тогда для входа с нового устройства понадобится не только код из СМС, но и твой личный пароль.' },
+                        { title: 'Проверяй активные сеансы', desc: 'Раз в месяц заходи в «Устройства» / «Активные сеансы» в настройках и завершай все незнакомые входы.' },
+                        { title: 'Закрой лишнее в настройках приватности', desc: 'Скрой номер телефона, дату рождения и список друзей от посторонних пользователей.' }
+                    ]
+                }
+            };
+
+            const kbTabs = document.querySelectorAll('.kb-tab');
+            const kbContent = document.getElementById('kb-content');
+
+            function renderKnowledgeTab(topicKey) {
+                const data = knowledgeData[topicKey];
+                kbContent.classList.remove('animate-fade-in');
+                void kbContent.offsetWidth;
+                kbContent.classList.add('animate-fade-in');
+
+                kbContent.innerHTML = `
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+                        <div class="lg:col-span-5 bg-cyber-bg/80 border border-cyber-border rounded-xl p-5 sm:p-6">
+                            <span class="inline-block text-[11px] font-mono uppercase tracking-wider px-2.5 py-1 rounded bg-cyber-danger/15 text-cyber-danger border border-cyber-danger/30 mb-3">
+                                В чём опасность
+                            </span>
+                            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2">${data.title}</h3>
+                            <p class="text-xs sm:text-sm text-cyber-cyan font-medium mb-4">${data.subtitle}</p>
+                            <p class="text-sm text-slate-300 leading-relaxed">${data.threatDesc}</p>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-3.5">
+                            <div class="text-xs font-mono uppercase tracking-wider text-cyber-emerald mb-1 flex items-center gap-1.5">
+                                <i data-lucide="shield" class="w-4 h-4"></i>
+                                <span>Что делать на практике:</span>
+                            </div>
+                            ${data.rules.map((rule, idx) => `
+                                <div class="p-4 rounded-xl bg-cyber-bg/50 border border-cyber-border hover:border-cyber-cyan/40 transition flex items-start gap-3.5">
+                                    <div class="w-7 h-7 rounded-lg bg-cyber-cyan/10 border border-cyber-cyan/30 text-cyber-cyan font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                                        0${idx + 1}
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm sm:text-base mb-1">${rule.title}</h4>
+                                        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${rule.desc}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                lucide.createIcons();
+            }
+
+            kbTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    kbTabs.forEach(t => {
+                        t.classList.remove('active', 'bg-cyber-cyan/15', 'border-cyber-cyan', 'text-cyber-cyan');
+                        t.classList.add('bg-cyber-card', 'border-cyber-border', 'text-slate-300');
+                    });
+                    tab.classList.add('active', 'bg-cyber-cyan/15', 'border-cyber-cyan', 'text-cyber-cyan');
+                    tab.classList.remove('bg-cyber-card', 'border-cyber-border', 'text-slate-300');
+                    renderKnowledgeTab(tab.dataset.topic);
+                });
+            });
+
+            renderKnowledgeTab('phishing');
+
+            // Чек-лист базовой безопасности
+            const hygieneSteps = [
+                {
+                    id: 'step-2fa-mail',
+                    title: 'Включён вход по коду (2FA) на основной почте',
+                    desc: 'Почта защищена приложением-аутентификатором или подтверждением входа.'
+                },
+                {
+                    id: 'step-unique-pwd',
+                    title: 'На важных сайтах стоят разные пароли от 12 символов',
+                    desc: 'Для банка, почты и соцсетей придуманы отдельные сложные пароли.'
+                },
+                {
+                    id: 'step-pwd-manager',
+                    title: 'Используется менеджер паролей',
+                    desc: 'Пароли не записаны в обычных заметках или в файле «пароли.txt» на рабочем столе.'
+                },
+                {
+                    id: 'step-messenger-cloud',
+                    title: 'Стоит облачный пароль в Телеграме / мессенджерах',
+                    desc: 'Включена двухэтапная аутентификация и проверен список активных устройств.'
+                },
+                {
+                    id: 'step-updates',
+                    title: 'Система и браузер обновляются вовремя',
+                    desc: 'Включено автообновление, чтобы закрывать свежие уязвимости.'
+                },
+                {
+                    id: 'step-backups',
+                    title: 'Важные файлы сохраняются в резервную копию',
+                    desc: 'Фотографии, документы и учёба продублированы в облако или на флешку/диск.'
+                },
+                {
+                    id: 'step-privacy',
+                    title: 'Профиль в соцсетях закрыт от лишних глаз',
+                    desc: 'Номер телефона и личные данные скрыты в настройках приватности.'
+                },
+                {
+                    id: 'step-sim-pin',
+                    title: 'Стоит PIN-код на SIM-карте и пароль на экране телефона',
+                    desc: 'Если телефон потеряется, чужой человек не сможет переставить симку и получить СМС от банка.'
+                }
+            ];
+
+            const checklistContainer = document.getElementById('checklist-items');
+            const hygieneProgressBar = document.getElementById('hygiene-progress-bar');
+            const hygienePercentEl = document.getElementById('hygiene-percent');
+            const hygieneCountEl = document.getElementById('hygiene-count');
+            const hygieneStatusTitle = document.getElementById('hygiene-status-title');
+            const hygieneAdvice = document.getElementById('hygiene-advice');
+            const headerScoreEl = document.getElementById('header-score');
+
+            let checkedState = {};
+            try {
+                const saved = localStorage.getItem('cybershield_checklist');
+                if (saved) checkedState = JSON.parse(saved);
+            } catch (e) {
+                checkedState = {};
+            }
+
+            function updateHygieneMetrics() {
+                const total = hygieneSteps.length;
+                const completed = hygieneSteps.filter(s => checkedState[s.id]).length;
+                const percent = Math.round((completed / total) * 100);
+
+                hygieneProgressBar.style.width = `${percent}%`;
+                hygienePercentEl.textContent = `${percent}%`;
+                headerScoreEl.textContent = `${percent}%`;
+                hygieneCountEl.textContent = `${completed} из ${total} сделано`;
+
+                if (percent === 0) {
+                    hygieneStatusTitle.textContent = 'Начальный уровень (много рисков)';
+                    hygieneStatusTitle.className = 'text-xl sm:text-2xl font-bold text-cyber-danger';
+                    hygieneAdvice.textContent = 'Начни с самого простого: поставь двухфакторную защиту на почту и облачный пароль в Телеграме.';
+                } else if (percent < 50) {
+                    hygieneStatusTitle.textContent = 'Базовый уровень (можно лучше)';
+                    hygieneStatusTitle.className = 'text-xl sm:text-2xl font-bold text-amber-400';
+                    hygieneAdvice.textContent = 'Уже неплохо, но стоит разделить пароли для разных сайтов и начать пользоваться менеджером паролей.';
+                } else if (percent < 100) {
+                    hygieneStatusTitle.textContent = 'Хороший уровень (уверенная защита)';
+                    hygieneStatusTitle.className = 'text-xl sm:text-2xl font-bold text-cyber-cyan';
+                    hygieneAdvice.textContent = 'Ты защищён лучше большинства пользователей. Осталось добить пару пунктов до полного спокойствия.';
+                } else {
+                    hygieneStatusTitle.textContent = 'Максимальный уровень (всё настроено)';
+                    hygieneStatusTitle.className = 'text-xl sm:text-2xl font-bold text-cyber-emerald';
+                    hygieneAdvice.textContent = 'Отлично! Все базовые правила безопасности соблюдены.';
+                }
+
+                try {
+                    localStorage.setItem('cybershield_checklist', JSON.stringify(checkedState));
+                } catch (e) {}
+            }
+
+            function renderChecklist() {
+                checklistContainer.innerHTML = hygieneSteps.map(step => {
+                    const isChecked = !!checkedState[step.id];
+                    return `
+                        <label for="${step.id}" class="p-4 rounded-2xl border transition cursor-pointer flex items-start gap-3.5 select-none ${isChecked ? 'bg-cyber-emerald/10 border-cyber-emerald/50' : 'glass-panel border-cyber-border hover:border-slate-500'}">
+                            <input type="checkbox" id="${step.id}" ${isChecked ? 'checked' : ''} class="mt-1 w-5 h-5 accent-cyber-emerald rounded cursor-pointer shrink-0">
+                            <div>
+                                <div class="font-semibold text-sm sm:text-base ${isChecked ? 'text-white' : 'text-slate-200'}">${step.title}</div>
+                                <div class="text-xs text-slate-400 mt-1 leading-relaxed">${step.desc}</div>
+                            </div>
+                        </label>
+                    `;
+                }).join('');
+
+                hygieneSteps.forEach(step => {
+                    const checkbox = document.getElementById(step.id);
+                    checkbox.addEventListener('change', (e) => {
+                        checkedState[step.id] = e.target.checked;
+                        renderChecklist();
+                        updateHygieneMetrics();
+                    });
+                });
+            }
+
+            document.getElementById('reset-checklist-btn').addEventListener('click', () => {
+                checkedState = {};
+                renderChecklist();
+                updateHygieneMetrics();
+                showToast('Отметки сброшены');
+            });
+
+            renderChecklist();
+            updateHygieneMetrics();
+        });
+    </script>
+</body>
+</html>
+
+```
